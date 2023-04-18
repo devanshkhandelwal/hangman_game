@@ -46,11 +46,13 @@ def guess_letter(word):
     print('\n')
     count = 0
     while True:
-        inp = input('Guess a letter: ')
+        inp = input('Guess a letter: ').lower()
         if inp in used_words:
             print('You have already chosen this letter. Try again')
         elif inp not in string.ascii_letters:
-            print('Invalid letter')
+            print('Invalid input')
+            print('Please try again')
+            print('\n')
         elif inp not in unused_words:
             print('\n')
             print(f'{inp} is not in the word!')
