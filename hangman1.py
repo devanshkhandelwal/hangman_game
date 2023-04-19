@@ -16,36 +16,24 @@ HANGMAN = [
     '|      / \ '
 ]
 
-def isUniqueChars(st):
- 
-    char_set = [False] * 128
-    for i in range(0, len(st)):
- 
-        val = ord(st[i])
-        if char_set[val]:
-            return False
- 
-        char_set[val] = True
- 
-    return True
- 
 def select_valid_word():
-    while True:
-        word = random.choice(words)
-        
-        if ' ' not in word and '-' not in word and isUniqueChars(word) :
-            for i in word:
-                if i not in unused_words:
-                    unused_words.append(i)
-            return str(word)
+    selected_word = word 
+    while ' ' in selected_word or selected_word == '':
+        selected_word = random.choice(words)
+    for i in selected_word:
+        if i not in unused_words:
+            unused_words.append(i)
+    return str(selected_word)
 
 def guess_letter(word):
-    unguessed = list('-'*len(word))
-    print('\n')
+    unguessed = list('_'*len(word))
+    for i in range(len(word)):
+        if word[i] == '-':
+            unguessed[i] = '-'
+    count, game_in_progress = 0, True
     print(''.join(unguessed))
     print('\n')
-    count = 0
-    while True:
+    while game_in_progress:
         inp = input('Guess a letter: ').lower()
         if inp in used_words:
             print('You have already chosen this letter. Try again')
@@ -58,25 +46,32 @@ def guess_letter(word):
             print(f'{inp} is not in the word!')
             print(''.join(unguessed))
             print('\n')
+            print('**************************')
+            print('\n')
             print('\n'.join(HANGMAN[:count+1]))
             print('\n')
-            count+=1
-            if count == 7:
-                print(f'You lost, the word was {word}')
-                break
+            print('**************************')
+            count+=1         
         else:
             used_words.append(inp)
             if inp in unused_words:
                 unused_words.remove(inp)
-                k = word.index(inp)
-                unguessed[k] = inp
                 print('\n')
                 print(f'{inp} is a correct letter!')
                 print('\n')
+                letter_index = word.find(inp)
+                while letter_index != -1:
+                    unguessed[letter_index] = inp
+                    letter_index = word.find(inp, letter_index+1) # remove while Trues, read about do while and while do loops and replace 71-77 with do while, rename k  
                 print(''.join(unguessed))
                 print('\n')
-                if unused_words == []:
+
+                if ''.join(unguessed) == word:
                     print(f'You Won! The word was {word}')
-                    break
+                    game_in_progress = False
+                    
+        if count == 7:
+            game_in_progress = False
+            print(f'You lost, the word was {word}')
                 
 guess_letter(select_valid_word())
